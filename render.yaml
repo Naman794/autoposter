@@ -1,0 +1,25 @@
+# Deploy the web panel first. It works in planning mode without Reddit credentials.
+# The separate render-cron.yaml is optional and creates a billed cron service.
+services:
+  - type: web
+    name: threadpilot-autoposter
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev && npm run check
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: threadpilot
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY
+        generateValue: true
+      - key: ENABLE_AUTOPUBLISH
+        value: "false"

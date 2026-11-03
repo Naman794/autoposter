@@ -1,0 +1,32 @@
+# Optional second Blueprint. Render cron jobs are billed separately.
+# Copy the SAME database, encryption key and Reddit app settings used by the web service.
+# APP_URL must be your web service's HTTPS origin, not the cron service.
+services:
+  - type: cron
+    name: threadpilot-publisher
+    runtime: node
+    plan: 0.5c-512mb
+    schedule: "*/15 * * * *"
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run publish:due
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: APP_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: threadpilot
+      - key: TOKEN_ENCRYPTION_KEY
+        sync: false
+      - key: REDDIT_CLIENT_ID
+        sync: false
+      - key: REDDIT_CLIENT_SECRET
+        sync: false
+      - key: REDDIT_USER_AGENT
+        sync: false
+      - key: ENABLE_AUTOPUBLISH
+        value: "false"
